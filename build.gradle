@@ -11,7 +11,8 @@
 apply plugin: 'groovy'
 apply plugin: 'idea'
 apply plugin: 'java'
-
+apply plugin: 'application'
+mainClassName = "org.kaddiya.gravy.Gravy"
 // In this section you declare where to find the dependencies of your project
 repositories {
     // Use 'jcenter' for resolving your dependencies.
@@ -23,11 +24,8 @@ repositories {
 dependencies {
     // We use the latest groovy 2.x version for building this library
     compile 'org.codehaus.groovy:groovy-all:2.4.0'
-    compile 'org.slf4j:slf4j-simple:1.6.1'
-    compile  'org.slf4j:slf4j-api:1.7.12'
 
     // We use the awesome Spock testing and specification framework
     testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
-    testCompile 'junit:junit:4.12'
 
 }
