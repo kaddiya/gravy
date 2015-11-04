@@ -1,5 +1,6 @@
 package org.kaddiya.gravy.initilaiser;
 
+import java.io.File;
 import java.nio.file.Path;
 
 /**
@@ -10,5 +11,5 @@ public interface Initialiser {
     /**
      * This is the method that prepare the environment.Any prerequisites are supposed to be downloaded and prepped
      */
-    public Path prepareEnvironment(String currentPath);
+    public File prepareEnvironment(String[] args);
 }

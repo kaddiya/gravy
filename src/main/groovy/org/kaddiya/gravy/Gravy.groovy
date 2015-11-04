@@ -12,17 +12,17 @@ import org.kaddiya.gravy.initilaiser.impl.GradleApplicationInitialiser
 @CompileStatic
 class Gravy {
 
-    public static void main(String[ ]args ){
+    public static void main(String[]args ){
         //GUICE it up
         Initialiser gradleAppInitialiser =  new GradleApplicationInitialiser();
         println("Welcome to the Dev Kitchen,the Groovy way.Please help us with your order!")
         assert args.size() >= 1 : "Please provide the recipe to cook!"
-        List<String> argsList = Arrays.asList(args)
-        String parentArg = argsList.get(0)
+
+        String parentArg = args[0]
         switch (parentArg.toUpperCase()){
             case "COOK":
                 assert System.getProperty("user.dir") : "the current path should not be null"
-                gradleAppInitialiser.prepareEnvironment(System.getProperty("user.dir"));
+                gradleAppInitialiser.prepareEnvironment(args);
                 println("Lets bootstrap your application")
                 break;
             default:

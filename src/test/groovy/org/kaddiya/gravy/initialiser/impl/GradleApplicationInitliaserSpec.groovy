@@ -11,16 +11,25 @@ import java.nio.file.Path
  * Created by Webonise on 03/11/15.
  */
 class GradleApplicationInitliaserSpec extends Specification {
-@Shared
+    @Shared
     Initialiser gradleAppInitialiser =  new GradleApplicationInitialiser();
 
+    @Shared
+    File rootDirectory
+
     def "prepare environment should download the gradle wrapper"(){
-
         when:
-        Path rootDirectory = gradleAppInitialiser.prepareEnvironment(System.getProperty("user.dir"))
+        String [] args = ["COOK","foo"]
+         rootDirectory = gradleAppInitialiser.prepareEnvironment(args)
         then:
-        assert  rootDirectory.toFile().isDirectory() : "Directory not created"
+        assert  rootDirectory.isDirectory() : "Root Directory not created"
+        assert new File(rootDirectory,"settings.gradle").exists() : "Settings file not found"
+        assert new File(rootDirectory,"build.gradle").exists()    : "build.gradle not created"
+        assert new File(rootDirectory,"src").exists()             : "src folder not created"
 
+    }
 
+    def cleanup(){
+        rootDirectory.deleteDir()
     }
 }
