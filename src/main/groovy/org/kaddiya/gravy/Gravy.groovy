@@ -1,7 +1,8 @@
 package org.kaddiya.gravy
 
+import com.google.inject.Guice
+import com.google.inject.Injector
 import groovy.transform.CompileStatic
-import groovy.util.logging.Slf4j
 import org.kaddiya.gravy.initilaiser.Initialiser
 import org.kaddiya.gravy.initilaiser.impl.GradleApplicationInitialiser
 
@@ -13,8 +14,8 @@ import org.kaddiya.gravy.initilaiser.impl.GradleApplicationInitialiser
 class Gravy {
 
     public static void main(String[]args ){
-        //GUICE it up
-        Initialiser gradleAppInitialiser =  new GradleApplicationInitialiser();
+        Injector gravyInjector = Guice.createInjector(new GravyModule())
+        Initialiser gradleAppInitialiser =  gravyInjector.getInstance(GradleApplicationInitialiser)
         println("Welcome to the Dev Kitchen,the Groovy way.Please help us with your order!")
         assert args.size() >= 1 : "Please provide the recipe to cook!"
 
@@ -22,7 +23,8 @@ class Gravy {
         switch (parentArg.toUpperCase()){
             case "COOK":
                 assert System.getProperty("user.dir") : "the current path should not be null"
-                gradleAppInitialiser.prepareEnvironment(args);
+                def rootDir = gradleAppInitialiser.prepareEnvironment(args);
+                gradleAppInitialiser.writeBuildGradleTemplate(rootDir)
                 println("Lets bootstrap your application")
                 break;
             default:
