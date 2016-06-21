@@ -7,7 +7,7 @@
         <servlet-class>restling.RestlingServlet</servlet-class>
         <init-param>
             <param-name>guice-module</param-name>
-            <param-value>$service_module</param-value>
+            <param-value>${groupId}.${serviceModule}</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>

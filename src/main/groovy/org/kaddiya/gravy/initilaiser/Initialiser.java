@@ -17,4 +17,13 @@ public interface Initialiser {
 
     void writeBuildGradleTemplate(File projectRootDir);
 
+    void writeWebXmlFile(File projectRootDir, String apiModuleClassName);
+
+    void writeServiceModuleClass(File projRootDir, String className, String rootRouterClassName);
+
+    void writeRootRouterClass(File projRootDir, String className);
+
+    void writeMetaRouterClass(File projectRootDir);
+
+    void writePingResourceClass(File projectRootDir);
 }

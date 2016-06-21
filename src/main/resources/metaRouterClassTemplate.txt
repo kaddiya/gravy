@@ -1,4 +1,4 @@
-package $groupId.resources.meta
+package ${groupPackage}.resources.meta
 
 import groovy.transform.CompileStatic
 import restling.restlet.RestlingRouter

@@ -1,6 +1,5 @@
 package org.kaddiya.gravy.model
 
-import groovy.transform.Canonical
 import groovy.transform.Immutable
 
 @Immutable

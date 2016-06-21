@@ -1,13 +1,13 @@
-package $groupId
+package $groupPackage
 
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import restling.restlet.RestlingRouter
-import $groupId.resources.meta.MetaRouter
+import ${groupPackage}.resources.meta.MetaRouter
 
 @Slf4j
 @CompileStatic
-class RootRouter extends RestlingRouter {
+class $rootRouter extends RestlingRouter {
 
     @Override
     void init() throws Exception {

@@ -1,15 +1,19 @@
 package org.kaddiya.gravy.initilaiser.impl
 
+import java.nio.file.Paths
+
 import com.google.inject.Inject
 import org.gradle.tooling.GradleConnector
-import org.kaddiya.gravy.creator.BuildScriptCreator
-import org.kaddiya.gravy.creator.DependencyCreator
-import org.kaddiya.gravy.creator.PluginCreator
-import org.kaddiya.gravy.creator.RepositoryCreator
-import org.kaddiya.gravy.creator.impl.BuildScriptCreatorImpl
-import org.kaddiya.gravy.creator.impl.DependencyCreatorImpl
-import org.kaddiya.gravy.creator.impl.PluginCreatorImpl
-import org.kaddiya.gravy.creator.impl.RepositoryCreatorImpl
+import org.kaddiya.gravy.Constants
+import org.kaddiya.gravy.generator.impl.BuildScriptGeneratorImpl
+import org.kaddiya.gravy.generator.impl.DependencyGeneratorImpl
+import org.kaddiya.gravy.generator.impl.MetaRouterGenerator
+import org.kaddiya.gravy.generator.impl.PingResourceGenerator
+import org.kaddiya.gravy.generator.impl.PluginGeneratorImpl
+import org.kaddiya.gravy.generator.impl.RepositoryGeneratorImpl
+import org.kaddiya.gravy.generator.impl.RootRouterGenerator
+import org.kaddiya.gravy.generator.impl.ServiceModuleGenerator
+import org.kaddiya.gravy.generator.impl.WebXmlCreator
 import org.kaddiya.gravy.initilaiser.Initialiser
 import org.kaddiya.gravy.model.GravyProject
 
@@ -18,29 +22,41 @@ import org.kaddiya.gravy.model.GravyProject
  */
 class GradleApplicationInitialiser implements Initialiser {
 
-    private PluginCreatorImpl pluginCreator
-    private DependencyCreatorImpl dependancyCreator
-    private BuildScriptCreatorImpl buildScriptCreator
-    private RepositoryCreatorImpl repositoryCreator
+    private PluginGeneratorImpl pluginCreator
+    private DependencyGeneratorImpl dependancyCreator
+    private BuildScriptGeneratorImpl buildScriptCreator
+    private RepositoryGeneratorImpl repositoryCreator
+    private WebXmlCreator webXmlCreator
+    private ServiceModuleGenerator serviceModuleCreator
+    private RootRouterGenerator  rootRouterCreator
+    private MetaRouterGenerator metaRouterCreator
+    private PingResourceGenerator pingResourceCreator
+    String groupId
+    File groupPackage
 
-    def GradleApplicationInitialiser() {
-        super()
-    }
 
     @Inject
-    GradleApplicationInitialiser( PluginCreator pluginCreator, DependencyCreator dependancyCreator,
-                                  BuildScriptCreator buildScriptCreator, RepositoryCreator repositoryCreator ) {
+    GradleApplicationInitialiser( PluginGeneratorImpl pluginCreator, DependencyGeneratorImpl dependancyCreator,
+                                  BuildScriptGeneratorImpl buildScriptCreator, RepositoryGeneratorImpl repositoryCreator,
+                                  WebXmlCreator webXmlCreator, ServiceModuleGenerator serviceModuleCreator,
+                                  RootRouterGenerator rootRouterCreator, MetaRouterGenerator metaRouterCreator,
+                                  PingResourceGenerator pingResourceCreator ) {
         this.pluginCreator = pluginCreator
         this.dependancyCreator = dependancyCreator
         this.buildScriptCreator = buildScriptCreator
         this.repositoryCreator = repositoryCreator
+        this.webXmlCreator = webXmlCreator
+        this.serviceModuleCreator = serviceModuleCreator
+        this.rootRouterCreator = rootRouterCreator
+        this.metaRouterCreator = metaRouterCreator
+        this.pingResourceCreator = pingResourceCreator
     }
 
     @Override
     File prepareEnvironment( String[] args ) {
         assert args.size() == 3: "Invalid arguments"
         String applicationName = args[1]
-        String groupPackageName = args[2]
+        groupId = args[2]
         String currentPath = System.getProperty("user.dir")
         assert currentPath: "Please specify the path"
         File projectRootDirectory = new File(currentPath, applicationName)
@@ -52,9 +68,13 @@ class GradleApplicationInitialiser implements Initialiser {
 
         downloadGradleWrapper(projectRootDirectory)
         bootstrapProject(projectRootDirectory)
-        File mainDirectory = new File(new File(projectRootDirectory, "src"), "main")
-        File javaDirectory = new File(mainDirectory, "java")
-        javaDirectory.mkdir()
+        String groovyPath = "/src/main/groovy"
+        String[] packageDirs = groupId.split("\\.")
+        packageDirs.each {String dirName ->
+                groovyPath = "${groovyPath}/${dirName}"
+        }
+        def groovyDir = Paths.get(projectRootDirectory.toString()+groovyPath).toFile()
+        groovyDir.mkdirs()
         return projectRootDirectory
     }
 
@@ -83,8 +103,55 @@ class GradleApplicationInitialiser implements Initialiser {
         String gradleBuildTemplate = gradleBuildFile.text
         def engine1 = new groovy.text.GStringTemplateEngine()
         def template = engine1.createTemplate(gradleBuildTemplate).make(teamplateBinding)
-        //print(template.toString())
         file.write(template.toString())
+
+
+    }
+
+    @Override
+    void writeWebXmlFile( File projectRootDir, String apiModuleClassName) {
+        def webXmlFile = webXmlCreator.createWebxmlFile(projectRootDir)
+        ClassLoader classLoader = getClass().getClassLoader();
+        File webXmlTextFile = new File(classLoader.getResource("webXmlTemplate.txt").getFile())
+        def webXmlTemplate = webXmlCreator.createXmlTemplate(webXmlTextFile, ["serviceModule" : apiModuleClassName, "groupId" : groupId])
+        webXmlFile.write(webXmlTemplate)
+    }
+
+    @Override
+    void writeServiceModuleClass( File projectRootDir, String className, String rootRouterClassName ) {
+        def serviceClassFile = this.serviceModuleCreator.createFile(projectRootDir)
+        ClassLoader classLoader = getClass().getClassLoader();
+        File serviceClassTextFile = new File(classLoader.getResource("serviceModuleClassTemplate.txt").getFile())
+        def serviceClassTemplate = this.serviceModuleCreator.createCode(serviceClassTextFile)
+        serviceClassFile.write(serviceClassTemplate)
+    }
+
+    @Override
+    void writeRootRouterClass( File projectRootDir, String className ) {
+        def routerClassFile = this.rootRouterCreator.createFile(projectRootDir)
+        ClassLoader classLoader = getClass().getClassLoader();
+        File routerClassTextFile = new File(classLoader.getResource("rootRouterClassTemplate.txt").getFile())
+        def rootRouterTemaplte = this.rootRouterCreator.createCode(routerClassTextFile)
+        routerClassFile.write(rootRouterTemaplte)
+    }
+
+    @Override
+    void writeMetaRouterClass( File projectRootDir ) {
+        def metaRouterClassFile = this.metaRouterCreator.createFile(projectRootDir)
+        ClassLoader classLoader = getClass().getClassLoader();
+        File routerClassTextFile = new File(classLoader.getResource("metaRouterClassTemplate.txt").getFile())
+        def metaRouterTemplate = this.metaRouterCreator.createCode(routerClassTextFile)
+        metaRouterClassFile.write(metaRouterTemplate)
+
+    }
+
+    @Override
+    void writePingResourceClass( File projectRootDir ) {
+        def pingResourceClassFile = this.pingResourceCreator.createFile(projectRootDir)
+        ClassLoader classLoader = getClass().getClassLoader();
+        File pingResourceTextFile = new File(classLoader.getResource("pingResourceClassTemplate.txt").getFile())
+        def pingResourceTemplate = this.pingResourceCreator.createCode(pingResourceTextFile)
+        pingResourceClassFile.write(pingResourceTemplate)
 
 
     }
