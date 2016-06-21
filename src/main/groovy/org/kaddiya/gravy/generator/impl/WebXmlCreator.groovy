@@ -2,24 +2,22 @@ package org.kaddiya.gravy.generator.impl
 
 import static org.kaddiya.gravy.Constants.FORMATTER
 
+import java.nio.file.Paths
+
 import groovy.transform.CompileStatic
 
 @CompileStatic
 class WebXmlCreator {
-
+    static final String WEB_XML_PATH = "/src/main/webapp/WEB-INF/web.xml"
 
     private File webXmlFile
 
     File createWebxmlFile(File projectRootDir){
-        def mainDir =   new File(new File(projectRootDir, "src"), "main")
-        def webAppDir = new File(mainDir, "webapp")
-        if(webAppDir.exists()){
-            webAppDir.delete()
-        }
-        webAppDir.mkdir()
-        def webInfFolder = new File(webAppDir, "WEB_INF")
-        webInfFolder.mkdir()
-        return  new File(webInfFolder, "web.xml")
+
+        File webXmlFile = new File(projectRootDir, Paths.get(WEB_XML_PATH).toFile().toString())
+        webXmlFile.getParentFile().mkdirs()
+        webXmlFile.createNewFile()
+        return  webXmlFile
     }
 
     String createXmlTemplate(File xmlTextFile, Map<String, String> binding ){

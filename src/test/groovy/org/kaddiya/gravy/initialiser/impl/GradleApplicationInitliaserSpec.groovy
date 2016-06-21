@@ -19,6 +19,7 @@ import org.kaddiya.gravy.generator.impl.MetaRouterGenerator
 import org.kaddiya.gravy.generator.impl.PingResourceGenerator
 import org.kaddiya.gravy.generator.impl.RootRouterGenerator
 import org.kaddiya.gravy.generator.impl.ServiceModuleGenerator
+import org.kaddiya.gravy.generator.impl.WebXmlCreator
 import org.kaddiya.gravy.initilaiser.Initialiser
 import org.kaddiya.gravy.initilaiser.impl.GradleApplicationInitialiser
 import spock.lang.Shared
@@ -88,7 +89,7 @@ class GradleApplicationInitliaserSpec extends Specification implements CodeGener
             gradleAppInitialiser.writeWebXmlFile(rootDirectory, "ServiceAPIModule")
         then:
             assert  rootDirectory.isDirectory() : "Root Directory not created"
-            def webXmlFile = new File(new File(new File(new File(new File(rootDirectory,"src"), "main"), "webapp"), "WEB_INF"), "web.xml")
+            def webXmlFile = new File(rootDirectory, Paths.get(WebXmlCreator.WEB_XML_PATH).toFile().toString())
             assert webXmlFile.exists() :" Web.xml does not exist"
 
 
