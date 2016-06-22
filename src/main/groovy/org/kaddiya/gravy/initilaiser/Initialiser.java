@@ -11,17 +11,15 @@ public interface Initialiser {
     /**
      * This is the method that prepare the environment.Any prerequisites are supposed to be downloaded and prepped
      */
-    File prepareEnvironment(String[] args);
-
-    void writeBuildGradleFile(File projectRootDir);
+    File prepareEnvironment();
 
     void writeBuildGradleTemplate(File projectRootDir);
 
-    void writeWebXmlFile(File projectRootDir, String apiModuleClassName);
+    void writeWebXmlFile(File projectRootDir);
 
-    void writeServiceModuleClass(File projRootDir, String className, String rootRouterClassName);
+    void writeServiceModuleClass(File projRootDir);
 
-    void writeRootRouterClass(File projRootDir, String className);
+    void writeRootRouterClass(File projRootDir);
 
     void writeMetaRouterClass(File projectRootDir);
 

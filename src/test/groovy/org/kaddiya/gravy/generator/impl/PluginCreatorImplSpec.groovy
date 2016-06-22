@@ -1,14 +1,18 @@
 package org.kaddiya.gravy.generator.impl
 
+import com.google.inject.AbstractModule
 import com.google.inject.Guice
 import com.google.inject.Injector
+import com.google.inject.name.Names
+import org.kaddiya.gravy.CodeGenerator
+import org.kaddiya.gravy.GravyModule
 import org.kaddiya.gravy.generator.CreatorApiModule
 import org.kaddiya.gravy.model.Plugin
 import spock.lang.Shared
 import spock.lang.Specification
 
 
-class PluginCreatorImplSpec extends Specification{
+class PluginCreatorImplSpec extends Specification implements CodeGenerator{
 
 
     @Shared
@@ -18,7 +22,15 @@ class PluginCreatorImplSpec extends Specification{
 
 
     def setupSpec(){
-        injector = Guice.createInjector(new CreatorApiModule())
+        def props = this.gravyPropMap
+        def gravyProps = new AbstractModule() {
+            @Override
+            protected void configure() {
+                bind(Map).annotatedWith(Names.named("gravyProps")).toInstance(props)
+            }
+        }
+
+        injector = Guice.createInjector(new GravyModule(gravyProps))
     }
 
     def setup(){

@@ -23,15 +23,16 @@ import org.kaddiya.gravy.initilaiser.impl.GradleApplicationInitialiser
 @CompileStatic
 class Gravy {
 
-    public static void main(String[]args ){
+    public static void main(String[] args ){
 
         println("Welcome to the Dev Kitchen,the Groovy way.Please help us with your order!")
         assert args.size() >= 1 : "Please provide the recipe to cook!"
 
         String parentArg = args[0]
+        def props = getGravyCookProperties(args)
         switch (parentArg.toUpperCase()){
             case "COOK":
-                def props = getGravyCookProperties()
+
                 def gravyPropsModule = new AbstractModule() {
                     @Override
                     protected void configure() {
@@ -41,13 +42,11 @@ class Gravy {
                 Injector gravyInjector = Guice.createInjector(new GravyModule(gravyPropsModule))
                 Initialiser gradleAppInitialiser =  gravyInjector.getInstance(GradleApplicationInitialiser)
                 assert System.getProperty("user.dir") : "the current path should not be null"
-                def rootDir = gradleAppInitialiser.prepareEnvironment(args);
+                def rootDir = gradleAppInitialiser.prepareEnvironment();
                 gradleAppInitialiser.writeBuildGradleTemplate(rootDir)
-                gradleAppInitialiser.writeWebXmlFile(rootDir,"ServiceModule")
-                gradleAppInitialiser.writeRootRouterClass(rootDir, "RootRouter")
-                gradleAppInitialiser.writeServiceModuleClass(
-                        rootDir, "ServiceModule", "MainRouter"
-                )
+                gradleAppInitialiser.writeWebXmlFile(rootDir)
+                gradleAppInitialiser.writeRootRouterClass(rootDir)
+                gradleAppInitialiser.writeServiceModuleClass(rootDir)
                 gradleAppInitialiser.writeMetaRouterClass(rootDir)
                 gradleAppInitialiser.writePingResourceClass(rootDir)
                 println("Lets bootstrap your application")
@@ -57,27 +56,21 @@ class Gravy {
         }
     }
 
-    static Map<String, String> getGravyCookProperties(){
+    static Map<String, String> getGravyCookProperties(String[] args){
+        String projectName = args[1]
+        String group = args[2]
+        if(!projectName){
+            projectName = DEFAULT_PROJECT_NAME
+            println"WARN: Projecct name is not provided so creating project with default name foo"
+        }
+
+        if(!group){
+            group = DEFAULT_GOUP_ID
+            println"WARN: Projecct groupId  is not provided so creating project with default name foo"
+        }
 
         Map<String, String> gravyCookProps = new HashMap<>()
-        /*Scanner scanner = new Scanner(System.in)
-        println"Please enter project name"
-        String projectName = scanner.next()
-        projectName = projectName ? projectName : DEFAULT_PROJECT_NAME
-        gravyCookProps.put("projectName", projectName)
-        println"Please enter groupId name(default is ${DEFAULT_GOUP_ID} com.foo)"
-        String groupPackage = scanner.next()
-        gravyCookProps.put("groupPackage", groupPackage)
-        println"Please Enter Service Module Class name (default is ${DEFAULT_SERVICE_MODULE})"
-        String serviceModule = scanner.next()
-        serviceModule =  serviceModule ? serviceModule : DEFAULT_SERVICE_MODULE
-        gravyCookProps.put("serviceModule", serviceModule)
-        println"Please enter Root router class name (default is ${DEFAULT_ROOT_ROUTER})"
-        String rootRouter = scanner.next()
-        rootRouter = rootRouter ? rootRouter : DEFAULT_ROOT_ROUTER
-        gravyCookProps.put("rootRouter", rootRouter)
-        println"${gravyCookProps}"*/
-        gravyCookProps.putAll([("${PROJECT_NAME_KEY}".toString()) : DEFAULT_PROJECT_NAME, ("${GROUP_ID_KEY}".toString()) : DEFAULT_GOUP_ID, ("${SERVICE_MODULE_KEY}".toString()) : DEFAULT_SERVICE_MODULE,
+        gravyCookProps.putAll([("${PROJECT_NAME_KEY}".toString()) : projectName, ("${GROUP_ID_KEY}".toString()) : group, ("${SERVICE_MODULE_KEY}".toString()) : DEFAULT_SERVICE_MODULE,
                                ("${ROOT_ROUTER_KEY}".toString()) : DEFAULT_ROOT_ROUTER])
         return gravyCookProps
     }
