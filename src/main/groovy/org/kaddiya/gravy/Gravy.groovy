@@ -57,8 +57,15 @@ class Gravy {
     }
 
     static Map<String, String> getGravyCookProperties(String[] args){
-        String projectName = args[1]
-        String group = args[2]
+        String group
+        if(args.size() >= 2){
+            group = args[1]
+        }
+        String projectName
+        if(args.size() >= 3){
+            projectName = args[2]
+        }
+
         if(!projectName){
             projectName = DEFAULT_PROJECT_NAME
             println"WARN: Projecct name is not provided so creating project with default name foo"
