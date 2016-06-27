@@ -1,7 +1,18 @@
 package org.kaddiya.gravy
 
+import static org.kaddiya.gravy.Constants.DEFAULT_GOUP_ID
+import static org.kaddiya.gravy.Constants.DEFAULT_PROJECT_NAME
+import static org.kaddiya.gravy.Constants.DEFAULT_ROOT_ROUTER
+import static org.kaddiya.gravy.Constants.DEFAULT_SERVICE_MODULE
+import static org.kaddiya.gravy.Constants.GROUP_ID_KEY
+import static org.kaddiya.gravy.Constants.PROJECT_NAME_KEY
+import static org.kaddiya.gravy.Constants.ROOT_ROUTER_KEY
+import static org.kaddiya.gravy.Constants.SERVICE_MODULE_KEY
+import com.google.inject.AbstractModule
+import com.google.inject.Guice
+import com.google.inject.Injector
+import com.google.inject.name.Names
 import groovy.transform.CompileStatic
-import groovy.util.logging.Slf4j
 import org.kaddiya.gravy.initilaiser.Initialiser
 import org.kaddiya.gravy.initilaiser.impl.GradleApplicationInitialiser
 
@@ -12,21 +23,62 @@ import org.kaddiya.gravy.initilaiser.impl.GradleApplicationInitialiser
 @CompileStatic
 class Gravy {
 
-    public static void main(String[]args ){
-        //GUICE it up
-        Initialiser gradleAppInitialiser =  new GradleApplicationInitialiser();
+    public static void main(String[] args ){
+
         println("Welcome to the Dev Kitchen,the Groovy way.Please help us with your order!")
         assert args.size() >= 1 : "Please provide the recipe to cook!"
 
         String parentArg = args[0]
+        def props = getGravyCookProperties(args)
         switch (parentArg.toUpperCase()){
             case "COOK":
+
+                def gravyPropsModule = new AbstractModule() {
+                    @Override
+                    protected void configure() {
+                        bind(Map).annotatedWith(Names.named("gravyProps")).toInstance(props)
+                    }
+                }
+                Injector gravyInjector = Guice.createInjector(new GravyModule(gravyPropsModule))
+                Initialiser gradleAppInitialiser =  gravyInjector.getInstance(GradleApplicationInitialiser)
                 assert System.getProperty("user.dir") : "the current path should not be null"
-                gradleAppInitialiser.prepareEnvironment(args);
+                def rootDir = gradleAppInitialiser.prepareEnvironment();
+                gradleAppInitialiser.writeBuildGradleTemplate(rootDir)
+                gradleAppInitialiser.writeWebXmlFile(rootDir)
+                gradleAppInitialiser.writeRootRouterClass(rootDir)
+                gradleAppInitialiser.writeServiceModuleClass(rootDir)
+                gradleAppInitialiser.writeMetaRouterClass(rootDir)
+                gradleAppInitialiser.writePingResourceClass(rootDir)
                 println("Lets bootstrap your application")
                 break;
             default:
                 throw new IllegalArgumentException("Top level argument not supported")
         }
+    }
+
+    static Map<String, String> getGravyCookProperties(String[] args){
+        String group
+        if(args.size() >= 2){
+            group = args[1]
+        }
+        String projectName
+        if(args.size() >= 3){
+            projectName = args[2]
+        }
+
+        if(!projectName){
+            projectName = DEFAULT_PROJECT_NAME
+            println"WARN: Projecct name is not provided so creating project with default name foo"
+        }
+
+        if(!group){
+            group = DEFAULT_GOUP_ID
+            println"WARN: Projecct groupId  is not provided so creating project with default name foo"
+        }
+
+        Map<String, String> gravyCookProps = new HashMap<>()
+        gravyCookProps.putAll([("${PROJECT_NAME_KEY}".toString()) : projectName, ("${GROUP_ID_KEY}".toString()) : group, ("${SERVICE_MODULE_KEY}".toString()) : DEFAULT_SERVICE_MODULE,
+                               ("${ROOT_ROUTER_KEY}".toString()) : DEFAULT_ROOT_ROUTER])
+        return gravyCookProps
     }
 }

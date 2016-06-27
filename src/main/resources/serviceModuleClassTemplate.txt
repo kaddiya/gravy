@@ -1,0 +1,16 @@
+package $groupPackage
+
+import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
+import restling.guice.modules.RestlingApplicationModule
+
+@Slf4j
+@CompileStatic
+class $serviceModule extends RestlingApplicationModule {
+
+    Class<$rootRouter> routerClass = $rootRouter
+
+    @Override
+    void configureCustomBindings() {
+    }
+}
