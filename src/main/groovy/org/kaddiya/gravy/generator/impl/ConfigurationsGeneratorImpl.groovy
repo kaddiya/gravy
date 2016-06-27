@@ -16,9 +16,6 @@ class ConfigurationsGeneratorImpl  extends AbstractScriptGenerator<Configuration
         def configurationList = DEFAULT_EXCLUDE_DEPENDENCY.collect{ dependency ->
             new Configuration(ConfigurationType.EXCLUDE, dependency)
         }
-        configurationList.addAll(DEFAULT_RESOLUTION_STRATEGY_DEPENDENCY.collect{ dependency ->
-            new Configuration(ConfigurationType.RESOLUTION_STRATEGY, dependency)
-        })
         create(configurationList)
     }
 

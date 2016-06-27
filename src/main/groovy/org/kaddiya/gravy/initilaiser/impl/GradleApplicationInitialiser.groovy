@@ -102,7 +102,19 @@ class GradleApplicationInitialiser implements Initialiser {
 
         def groovyDir = Paths.get(projectRootDirectory.toString()+groovyPath).toFile()
         groovyDir.mkdirs()
+        def libFilePath = "/src/main/groovy/Library.groovy"
+        deleteFileIfExist(projectRootDirectory, libFilePath)
+        def libTestFilePath = "/src/test/groovy/LibraryTest.groovy"
+        deleteFileIfExist(projectRootDirectory, libTestFilePath)
+
         return projectRootDirectory
+    }
+
+    private void deleteFileIfExist(File rootDir, String filePath){
+        File fileToDelete = new File(rootDir, Paths.get(filePath).toFile().toString())
+        if(fileToDelete.exists()){
+            fileToDelete.delete()
+        }
     }
 
     @Override
@@ -113,6 +125,7 @@ class GradleApplicationInitialiser implements Initialiser {
         teamplateBinding.putAll(this.pluginCreator.getModelBinding())
         teamplateBinding.putAll(this.repositoryCreator.getModelBinding())
         teamplateBinding.putAll(this.dependancyCreator.getModelBinding())
+        teamplateBinding.putAll(this.configurationsGenerator.getModelBinding())
         teamplateBinding.putAll(["buildScript" : this.buildScriptCreator.getBuildScriptList().join("\n")])
 
         def engine1 = new groovy.text.GStringTemplateEngine()
