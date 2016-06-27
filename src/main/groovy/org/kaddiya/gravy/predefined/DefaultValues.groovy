@@ -20,18 +20,27 @@ class DefaultValues {
 
     static final List<Dependency> DEFAULT_COMPILE_DEPENDANCIES = Collections.unmodifiableList(Arrays.asList(
             new GAV("restling", "restling-core", "0.0.7")).collect { GAV gav ->
-        new Dependency(phaseType : BuildPhaseType.COMPILE, gav: gav, isBuildScript : false)
+        new Dependency(phaseType: BuildPhaseType.COMPILE, gav: gav, isBuildScript: false)
     }
     );
 
+
     static final List<Dependency> DEFAULT_TEST_DEPENDENCIES = Collections.unmodifiableList(Arrays.asList(
-    new GAV("org.spockframework", "spock-core", "0.7-groovy-2.0"), new GAV("junit", "junit", "4.12")).collect{
-        GAV gav ->  new Dependency(phaseType:  BuildPhaseType.TEST_COMPILE, gav:  gav, isBuildScript:  false)
+            new GAV("org.spockframework", "spock-core", "0.7-groovy-2.0"), new GAV("junit", "junit", "4.12")).collect {
+        GAV gav -> new Dependency(phaseType: BuildPhaseType.TEST_COMPILE, gav: gav, isBuildScript: false)
     });
 
     static final List<Dependency> DEFAULT_BUILDSCRIPT_DEPENDENCY = Collections.unmodifiableList(Arrays.asList(
             new GAV("org.akhikhl.gretty", "gretty", "+")).collect { GAV gav ->
-        new Dependency(phaseType:  BuildPhaseType.COMPILE, gav : gav, isBuildScript:  true)
+        new Dependency(phaseType: BuildPhaseType.COMPILE, gav: gav, isBuildScript: true)
     })
 
+    static final List<Dependency> DEFAULT_RESOLUTION_STRATEGY_DEPENDENCY = Collections.unmodifiableList(Arrays.asList(
+            new GAV("org.codehaus.groovy", "groovy-all", "2.4.7")).collect { GAV gav ->
+        new Dependency(phaseType: BuildPhaseType.ALL, gav: gav, isBuildScript: false)
+    })
+    static final List<Dependency> DEFAULT_EXCLUDE_DEPENDENCY = Collections.unmodifiableList(Arrays.asList(
+            new GAV("org.slf4j", "slf4j-nop", ""), new GAV("org.slf4j", "log4j-over-slf4j", "")).collect { GAV gav ->
+        new Dependency(phaseType: BuildPhaseType.ALL, gav: gav, isBuildScript: false)
+    })
 }

@@ -2,6 +2,7 @@ package org.kaddiya.gravy.generator
 
 import com.google.inject.AbstractModule
 import org.kaddiya.gravy.generator.impl.BuildScriptGeneratorImpl
+import org.kaddiya.gravy.generator.impl.ConfigurationsGeneratorImpl
 import org.kaddiya.gravy.generator.impl.DependencyGeneratorImpl
 import org.kaddiya.gravy.generator.impl.MetaRouterGenerator
 import org.kaddiya.gravy.generator.impl.PingResourceGenerator
@@ -24,5 +25,6 @@ class CreatorApiModule extends AbstractModule{
         bind(PingResourceGenerator)
         bind(ServiceModuleGenerator)
         bind(RootRouterGenerator)
+        bind(ConfigurationsGeneratorImpl)
     }
 }

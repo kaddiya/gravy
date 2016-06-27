@@ -1,6 +1,7 @@
 package org.kaddiya.gravy.generator.impl
 
 import static org.kaddiya.gravy.predefined.DefaultValues.DEFAULT_COMPILE_DEPENDANCIES
+import static org.kaddiya.gravy.predefined.DefaultValues.DEFAULT_RESOLUTION_STRATEGY_DEPENDENCY
 import static org.kaddiya.gravy.predefined.DefaultValues.DEFAULT_TEST_DEPENDENCIES
 
 import org.kaddiya.gravy.generator.AbstractScriptGenerator
@@ -13,6 +14,7 @@ class DependencyGeneratorImpl<Dependency> extends AbstractScriptGenerator<Depend
         this.modelList.add("}")
         create(DEFAULT_COMPILE_DEPENDANCIES)
         create(DEFAULT_TEST_DEPENDENCIES)
+
     }
 
     @Override
@@ -28,6 +30,7 @@ class DependencyGeneratorImpl<Dependency> extends AbstractScriptGenerator<Depend
         testRuntimeDependencies(dependencyList)
         classpathDependencies(dependencyList)
         grettyRunnerTomcat8Dependencies(dependencyList)
+        this.binding.putAll(["groovyDependency" : DEFAULT_RESOLUTION_STRATEGY_DEPENDENCY.get(0).toString()])
 
     }
 

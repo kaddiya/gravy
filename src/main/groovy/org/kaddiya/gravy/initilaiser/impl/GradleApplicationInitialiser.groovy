@@ -10,6 +10,7 @@ import static org.kaddiya.gravy.Constants.PROJECT_NAME_KEY
 import static org.kaddiya.gravy.Constants.SERVICE_MODULE_KEY
 
 import org.kaddiya.gravy.generator.impl.BuildScriptGeneratorImpl
+import org.kaddiya.gravy.generator.impl.ConfigurationsGeneratorImpl
 import org.kaddiya.gravy.generator.impl.DependencyGeneratorImpl
 import org.kaddiya.gravy.generator.impl.MetaRouterGenerator
 import org.kaddiya.gravy.generator.impl.PingResourceGenerator
@@ -19,6 +20,7 @@ import org.kaddiya.gravy.generator.impl.RootRouterGenerator
 import org.kaddiya.gravy.generator.impl.ServiceModuleGenerator
 import org.kaddiya.gravy.generator.impl.WebXmlCreator
 import org.kaddiya.gravy.initilaiser.Initialiser
+import org.kaddiya.gravy.model.Configuration
 
 class GradleApplicationInitialiser implements Initialiser {
 
@@ -44,6 +46,7 @@ class GradleApplicationInitialiser implements Initialiser {
     private final String metaRouterTemplate
     private final String pingResourceTemplate
     private final Map<String, String> gravyProps
+    private final ConfigurationsGeneratorImpl configurationsGenerator
 
 
 
@@ -52,7 +55,8 @@ class GradleApplicationInitialiser implements Initialiser {
                                   BuildScriptGeneratorImpl buildScriptCreator, WebXmlCreator webXmlCreator,
                                   RepositoryGeneratorImpl repositoryCreator, RootRouterGenerator rootRouterCreator,
                                   ServiceModuleGenerator serviceModuleCreator, MetaRouterGenerator metaRouterCreator,
-                                  PingResourceGenerator pingResourceCreator, @Named("gravyProps")Map gravyProps) {
+                                  PingResourceGenerator pingResourceCreator, @Named("gravyProps")Map gravyProps,
+                                  ConfigurationsGeneratorImpl configurationsGenerator) {
 
         this.pluginCreator = pluginCreator
         this.dependancyCreator = dependancyCreator
@@ -63,6 +67,7 @@ class GradleApplicationInitialiser implements Initialiser {
         this.rootRouterCreator = rootRouterCreator
         this.metaRouterCreator = metaRouterCreator
         this.pingResourceCreator = pingResourceCreator
+        this.configurationsGenerator = configurationsGenerator
 
         this.gravyProps = gravyProps
 

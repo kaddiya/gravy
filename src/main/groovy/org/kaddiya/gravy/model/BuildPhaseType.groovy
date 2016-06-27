@@ -7,7 +7,7 @@ enum BuildPhaseType {
 
     COMPILE("compile"), TEST_COMPILE("testCompile"), RUNTIME("runtime"),
     GRETTY_RUNNER_TOMCAT8("grettyRunnerTomcat8"), TEST_RUNTIME("testRuntime"),
-    CLASSPATH("classpath")
+    CLASSPATH("classpath"), ALL("all*")
 
     private String phaseTypeValue
 

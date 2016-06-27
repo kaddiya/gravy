@@ -12,6 +12,6 @@ import groovy.transform.Immutable
     String version
 
     String toString(){
-        return "'${groupId}:${artifactId}:${version}'"
+        return version ? "'${groupId}:${artifactId}:${version}'" : "'${groupId}:${artifactId}'"
     }
 }

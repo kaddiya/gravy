@@ -11,6 +11,6 @@ class $rootRouter extends RestlingRouter {
 
     @Override
     void init() throws Exception {
-        attach("/meta", MetaRouter)
+        attachSubRouter("/meta", MetaRouter)
     }
 }
