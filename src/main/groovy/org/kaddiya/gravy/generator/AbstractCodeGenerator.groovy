@@ -38,13 +38,13 @@ abstract class AbstractCodeGenerator {
         return generatedFile
     }
 
-    protected String generateCode(File templateFile,  Map<String, String> binding){
-        return simpleTemplateEngine.createTemplate(templateFile).make(binding).toString()
+    protected String generateCode(String template,  Map<String, String> binding){
+        return simpleTemplateEngine.createTemplate(template).make(binding).toString()
 
     }
 
     abstract protected File createFile(File projRootDir);
-    abstract protected String createCode(File metaRouterTemplateFile);
+    abstract protected String createCode(String metaRouterTemplate);
 
     protected String groupPackage(String groupId){
         return groupId.replace(".", "/")

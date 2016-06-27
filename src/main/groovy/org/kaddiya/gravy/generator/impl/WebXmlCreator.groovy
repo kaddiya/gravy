@@ -20,7 +20,7 @@ class WebXmlCreator {
         return  webXmlFile
     }
 
-    String createXmlTemplate(File xmlTextFile, Map<String, String> binding ){
+    String createXmlTemplate(String xmlTextFile, Map<String, String> binding ){
         def xmlEngine = new groovy.text.XmlTemplateEngine()
         xmlEngine.indentation = FORMATTER
         def webXmlTemplate = xmlEngine.createTemplate(xmlTextFile).make(binding)

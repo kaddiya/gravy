@@ -24,7 +24,7 @@ class PingResourceGenerator  extends AbstractCodeGenerator{
     }
 
     @Override
-    public String createCode( File metaRouterTemplateFile) {
-        return super.generateCode(metaRouterTemplateFile, binding)
+    public String createCode( String metaRouterTemplate ) {
+        return super.generateCode(metaRouterTemplate, binding)
     }
 }
