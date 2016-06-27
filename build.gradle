@@ -62,4 +62,4 @@ buildscript {
 		classpath "com.diffplug.gradle.spotless:spotless:1.3.3"
 	}
 }
-t
+
