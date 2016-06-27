@@ -42,6 +42,9 @@ dependencies {
 }
 
 configurations {
+
+        $configDependencies
+
      // Ensure we're not bleeding over
         all*.resolutionStrategy {
             force $groovyDependency

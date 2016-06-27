@@ -102,6 +102,11 @@ class GradleApplicationInitialiser implements Initialiser {
 
         def groovyDir = Paths.get(projectRootDirectory.toString()+groovyPath).toFile()
         groovyDir.mkdirs()
+        def libFilePath = "/src/main/groovy/Library.groovy"
+        File libFile = new File(projectRootDirectory, Paths.get(libFilePath).toFile().toString())
+        if(libFile.exists()){
+            libFile.delete()
+        }
         return projectRootDirectory
     }
 
@@ -113,6 +118,7 @@ class GradleApplicationInitialiser implements Initialiser {
         teamplateBinding.putAll(this.pluginCreator.getModelBinding())
         teamplateBinding.putAll(this.repositoryCreator.getModelBinding())
         teamplateBinding.putAll(this.dependancyCreator.getModelBinding())
+        teamplateBinding.putAll(this.configurationsGenerator.getModelBinding())
         teamplateBinding.putAll(["buildScript" : this.buildScriptCreator.getBuildScriptList().join("\n")])
 
         def engine1 = new groovy.text.GStringTemplateEngine()
