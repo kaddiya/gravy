@@ -57,6 +57,39 @@ On top of it ,Gravy seamlessly integrates with other f/w in the ecosystem withou
 We hope you will love using the f/w as much as we have had fun developing it.  </p>
 
 <h3>
+<a id="pre-requisites" class="anchor" href="#pre-requisites" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Pre-Requisites:</h3>
+
+<p>1.you just need a  JDK_8 installed.  </p>
+
+<h3>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation:</h3>
+
+<p>1.Download the latest version from here. </p>
+
+<p>2.Unzip the distribution to your favourite location.   </p>
+
+<p>3.set the <code>$GRAVY_HOME</code> variable to where you have unzipped the above distro.  </p>
+
+<p>4.Modify your path variable to <code>$PATH:$GRAVY_HOME/bin</code>.  </p>
+
+<p>5.You are set!</p>
+
+<h3>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h3>
+
+<p>1.Go to any directory where you want to bootstrap a new project.   </p>
+
+<p>2.Run <code>gravy cook &lt;com.your_groupId&gt; &lt;your_project_name&gt;</code>.    </p>
+
+<p>3.After Gravy finishes bootstrapping it up you will find a new folder with <code>&lt;your_project_name&gt;</code> created.  </p>
+
+<p>4.CD into that location and run <code>./gradlew clean appRun</code>.    </p>
+
+<p>5.At this point of time your application should come up at  <code>http://localhost:8080</code>.    </p>
+
+<p>6.To verify everything works hit the following URL <code>http://localhost:8080/meta/ping</code> .It should return <code>PONG</code> as response.  </p>
+
+<h3>
 <a id="authors-and-contributors" class="anchor" href="#authors-and-contributors" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Authors and Contributors</h3>
 
 <p>Maintained by<br>
