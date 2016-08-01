@@ -15,6 +15,10 @@ apply plugin: 'application'
 apply plugin: 'maven'
 
 mainClassName = "org.kaddiya.gravy.Gravy"
+group = project.properties.groupId
+version = project.properties.version
+
+
 // In this section you declare where to find the dependencies of your project
 repositories {
 	// Use 'jcenter' for resolving your dependencies.
@@ -24,10 +28,9 @@ repositories {
 	jcenter()
 }
 
+
 // In this section you declare the dependencies for your production and test code
 dependencies {
-	// We use the latest groovy 2.x version for building this library
-// compile 'org.codehaus.groovy:groovy-all:2.4.0'
 	compile 'org.codehaus.groovy:groovy-all:[2.4,5)'
 	compile  "org.gradle:gradle-tooling-api:${gradle.gradleVersion}"
 	compile  'com.google.inject:guice:[4.0,5)'
@@ -50,6 +53,12 @@ configurations {
 	all*.resolutionStrategy {
 		force "org.codehaus.groovy:groovy-all:2.4.7"
 	}
+
+	application{
+			applicationName = "gravy"
+	}
+
+
 }
 
 buildscript {
