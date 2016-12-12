@@ -8,14 +8,9 @@ import groovy.json.JsonSlurper
 import org.gradle.tooling.GradleConnector
 import org.kaddiya.gravy.generator.impl.*
 import org.kaddiya.gravy.initilaiser.Initialiser
-<<<<<<< Updated upstream
-import org.kaddiya.gravy.model.Configuration
-=======
 import org.kaddiya.gravy.model.API
 import org.kaddiya.gravy.model.Swagger
-
 import java.nio.file.Paths
->>>>>>> Stashed changes
 
 import static org.kaddiya.gravy.Constants.*
 
