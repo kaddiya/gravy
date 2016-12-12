@@ -1,13 +1,4 @@
 package org.kaddiya.gravy
-
-import static org.kaddiya.gravy.Constants.DEFAULT_GOUP_ID
-import static org.kaddiya.gravy.Constants.DEFAULT_PROJECT_NAME
-import static org.kaddiya.gravy.Constants.DEFAULT_ROOT_ROUTER
-import static org.kaddiya.gravy.Constants.DEFAULT_SERVICE_MODULE
-import static org.kaddiya.gravy.Constants.GROUP_ID_KEY
-import static org.kaddiya.gravy.Constants.PROJECT_NAME_KEY
-import static org.kaddiya.gravy.Constants.ROOT_ROUTER_KEY
-import static org.kaddiya.gravy.Constants.SERVICE_MODULE_KEY
 import com.google.inject.AbstractModule
 import com.google.inject.Guice
 import com.google.inject.Injector
@@ -16,6 +7,7 @@ import groovy.transform.CompileStatic
 import org.kaddiya.gravy.initilaiser.Initialiser
 import org.kaddiya.gravy.initilaiser.impl.GradleApplicationInitialiser
 
+import static org.kaddiya.gravy.Constants.*
 /**
  * Created by Webonise on 03/11/15.
  */
@@ -49,6 +41,7 @@ class Gravy {
                 gradleAppInitialiser.writeServiceModuleClass(rootDir)
                 gradleAppInitialiser.writeMetaRouterClass(rootDir)
                 gradleAppInitialiser.writePingResourceClass(rootDir)
+                gradleAppInitialiser.writeAPI();
                 println("Lets bootstrap your application")
                 break;
             default:
@@ -66,6 +59,11 @@ class Gravy {
             projectName = args[2]
         }
 
+        String swaggerFile
+        if (args.size() >= 4) {
+            swaggerFile = args[3];
+        }
+
         if(!projectName){
             projectName = DEFAULT_PROJECT_NAME
             println"WARN: Projecct name is not provided so creating project with default name foo"
@@ -77,8 +75,8 @@ class Gravy {
         }
 
         Map<String, String> gravyCookProps = new HashMap<>()
-        gravyCookProps.putAll([("${PROJECT_NAME_KEY}".toString()) : projectName, ("${GROUP_ID_KEY}".toString()) : group, ("${SERVICE_MODULE_KEY}".toString()) : DEFAULT_SERVICE_MODULE,
-                               ("${ROOT_ROUTER_KEY}".toString()) : DEFAULT_ROOT_ROUTER])
+        gravyCookProps.putAll([("${PROJECT_NAME_KEY}".toString()): projectName, ("${GROUP_ID_KEY}".toString()): group, ("${SERVICE_MODULE_KEY}".toString()): DEFAULT_SERVICE_MODULE,
+                               ("${ROOT_ROUTER_KEY}".toString()) : DEFAULT_ROOT_ROUTER, ("${SWAGGER_FILE}".toString()): swaggerFile])
         return gravyCookProps
     }
 }

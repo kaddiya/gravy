@@ -12,4 +12,5 @@ public interface Constants {
     String GROUP_ID_KEY             =  "groupId";
     String GROUP_PACKAGE_KEY        =  "groupPackage";
     String PROJECT_NAME_KEY         =  "projectName";
+    String SWAGGER_FILE             =  "swaggerFile";
 }

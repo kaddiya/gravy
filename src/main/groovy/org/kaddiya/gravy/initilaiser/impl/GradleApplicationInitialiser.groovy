@@ -4,23 +4,20 @@ import java.nio.file.Paths
 
 import com.google.inject.Inject
 import com.google.inject.name.Named
+import groovy.json.JsonSlurper
 import org.gradle.tooling.GradleConnector
-import static org.kaddiya.gravy.Constants.GROUP_ID_KEY
-import static org.kaddiya.gravy.Constants.PROJECT_NAME_KEY
-import static org.kaddiya.gravy.Constants.SERVICE_MODULE_KEY
-
-import org.kaddiya.gravy.generator.impl.BuildScriptGeneratorImpl
-import org.kaddiya.gravy.generator.impl.ConfigurationsGeneratorImpl
-import org.kaddiya.gravy.generator.impl.DependencyGeneratorImpl
-import org.kaddiya.gravy.generator.impl.MetaRouterGenerator
-import org.kaddiya.gravy.generator.impl.PingResourceGenerator
-import org.kaddiya.gravy.generator.impl.PluginGeneratorImpl
-import org.kaddiya.gravy.generator.impl.RepositoryGeneratorImpl
-import org.kaddiya.gravy.generator.impl.RootRouterGenerator
-import org.kaddiya.gravy.generator.impl.ServiceModuleGenerator
-import org.kaddiya.gravy.generator.impl.WebXmlCreator
+import org.kaddiya.gravy.generator.impl.*
 import org.kaddiya.gravy.initilaiser.Initialiser
+<<<<<<< Updated upstream
 import org.kaddiya.gravy.model.Configuration
+=======
+import org.kaddiya.gravy.model.API
+import org.kaddiya.gravy.model.Swagger
+
+import java.nio.file.Paths
+>>>>>>> Stashed changes
+
+import static org.kaddiya.gravy.Constants.*
 
 class GradleApplicationInitialiser implements Initialiser {
 
@@ -106,7 +103,6 @@ class GradleApplicationInitialiser implements Initialiser {
         deleteFileIfExist(projectRootDirectory, libFilePath)
         def libTestFilePath = "/src/test/groovy/LibraryTest.groovy"
         deleteFileIfExist(projectRootDirectory, libTestFilePath)
-
         return projectRootDirectory
     }
 
@@ -169,9 +165,33 @@ class GradleApplicationInitialiser implements Initialiser {
         pingResourceClassFile.write(pingResourceTemplate)
     }
 
+    @Override
+    void writeAPI() {
+        File swaggerFile = Paths.get(System.properties['user.dir'], this.gravyProps.get(SWAGGER_FILE)).toFile()
+        print swaggerFile.text
+        parseSwaggerFile(swaggerFile);
+    }
+
+    private void parseSwaggerFile(File swaggerFile) {
+        def jsonSlurper = new JsonSlurper();
+        def swagger = (Swagger)jsonSlurper.parse(swaggerFile)
+        List<API> apiList = swagger.apis;
+        apiList.each {
+            api ->
+                def Api = new API(api.operations, api.path)
+                print Api.toString();
+        }
+
+    }
+
     void bootstrapProject( File projectRootDirectory ) {
-        //this is a hack because the tooling-api doesnt accept the arguments
-        println "./gradlew init --type groovy-library".execute(null, projectRootDirectory).text
+        String command;
+        if (System.properties['os.name'].toString().toLowerCase().contains('windows')) {
+            command = "cmd /c gradlew.bat init --type groovy-library"
+        } else {
+            command = "./gradlew init --type groovy-library"
+        }
+        println command.execute(null, projectRootDirectory).text
     }
 
     void downloadGradleWrapper( File projectRootDirectory ) {
@@ -182,5 +202,4 @@ class GradleApplicationInitialiser implements Initialiser {
             conn.close();
         }
     }
-
 }
