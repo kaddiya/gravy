@@ -1,7 +1,4 @@
 package org.kaddiya.gravy.initilaiser.impl
-
-import java.nio.file.Paths
-
 import com.google.inject.Inject
 import com.google.inject.name.Named
 import org.gradle.tooling.GradleConnector
@@ -20,7 +17,8 @@ import org.kaddiya.gravy.generator.impl.RootRouterGenerator
 import org.kaddiya.gravy.generator.impl.ServiceModuleGenerator
 import org.kaddiya.gravy.generator.impl.WebXmlCreator
 import org.kaddiya.gravy.initilaiser.Initialiser
-import org.kaddiya.gravy.model.Configuration
+
+import java.nio.file.Paths
 
 class GradleApplicationInitialiser implements Initialiser {
 
@@ -171,7 +169,13 @@ class GradleApplicationInitialiser implements Initialiser {
 
     void bootstrapProject( File projectRootDirectory ) {
         //this is a hack because the tooling-api doesnt accept the arguments
-        println "./gradlew init --type groovy-library".execute(null, projectRootDirectory).text
+        String command;
+        if (System.properties['os.name'].toLowerCase().contains('windows')) {
+            command = "cmd /c gradlew.bat init --type groovy-library"
+        } else {
+            command = "./gradlew init --type groovy-library"
+        }
+        println command.execute(null, projectRootDirectory).text
     }
 
     void downloadGradleWrapper( File projectRootDirectory ) {
