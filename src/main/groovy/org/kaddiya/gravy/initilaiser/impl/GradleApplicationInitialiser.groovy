@@ -18,9 +18,11 @@ import org.kaddiya.gravy.initilaiser.Initialiser
 
 import java.nio.file.Paths
 
+
 import static org.kaddiya.gravy.Constants.GROUP_ID_KEY
 import static org.kaddiya.gravy.Constants.PROJECT_NAME_KEY
 import static org.kaddiya.gravy.Constants.SERVICE_MODULE_KEY
+
 
 class GradleApplicationInitialiser implements Initialiser {
 
@@ -182,7 +184,13 @@ class GradleApplicationInitialiser implements Initialiser {
 
     void bootstrapProject( File projectRootDirectory ) {
         //this is a hack because the tooling-api doesnt accept the arguments
-        println "./gradlew init --type groovy-library".execute(null, projectRootDirectory).text
+        String command;
+        if (System.properties['os.name'].toLowerCase().contains('windows')) {
+            command = "cmd /c gradlew.bat init --type groovy-library"
+        } else {
+            command = "./gradlew init --type groovy-library"
+        }
+        println command.execute(null, projectRootDirectory).text
     }
 
     void downloadGradleWrapper( File projectRootDirectory ) {
