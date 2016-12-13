@@ -4,6 +4,7 @@ import com.google.inject.AbstractModule
 import org.kaddiya.gravy.generator.impl.BuildScriptGeneratorImpl
 import org.kaddiya.gravy.generator.impl.ConfigurationsGeneratorImpl
 import org.kaddiya.gravy.generator.impl.DependencyGeneratorImpl
+import org.kaddiya.gravy.generator.impl.GitIgnoreGenerator
 import org.kaddiya.gravy.generator.impl.MetaRouterGenerator
 import org.kaddiya.gravy.generator.impl.PingResourceGenerator
 import org.kaddiya.gravy.generator.impl.PluginGeneratorImpl
@@ -21,6 +22,7 @@ class CreatorApiModule extends AbstractModule{
         bind(PluginGeneratorImpl)
         bind(BuildScriptGenerator).to(BuildScriptGeneratorImpl)
         bind(WebXmlCreator)
+        bind(GitIgnoreGenerator)
         bind(MetaRouterGenerator)
         bind(PingResourceGenerator)
         bind(ServiceModuleGenerator)

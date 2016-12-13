@@ -17,6 +17,8 @@ public interface Initialiser {
 
     void writeWebXmlFile(File projectRootDir);
 
+    void writeGitIgnoreFile( File projectRootDir);
+
     void writeServiceModuleClass(File projRootDir);
 
     void writeRootRouterClass(File projRootDir);

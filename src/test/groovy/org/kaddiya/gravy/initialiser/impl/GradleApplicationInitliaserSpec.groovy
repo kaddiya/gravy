@@ -1,13 +1,4 @@
 package org.kaddiya.gravy.initialiser.impl
-
-
-import static org.kaddiya.gravy.Constants.DEFAULT_SERVICE_MODULE
-import static org.kaddiya.gravy.Constants.DEFAULT_GOUP_ID
-import static org.kaddiya.gravy.Constants.DEFAULT_ROOT_ROUTER
-import static org.kaddiya.gravy.Constants.DEFAULT_PROJECT_NAME
-
-import java.nio.file.Paths
-
 import com.google.inject.AbstractModule
 import com.google.inject.Guice
 import com.google.inject.Injector
@@ -25,6 +16,12 @@ import org.kaddiya.gravy.initilaiser.impl.GradleApplicationInitialiser
 import spock.lang.Shared
 import spock.lang.Specification
 
+import java.nio.file.Paths
+
+import static org.kaddiya.gravy.Constants.DEFAULT_SERVICE_MODULE
+import static org.kaddiya.gravy.Constants.DEFAULT_GOUP_ID
+import static org.kaddiya.gravy.Constants.DEFAULT_ROOT_ROUTER
+import static org.kaddiya.gravy.generator.impl.GitIgnoreGenerator.GIT_IGNORE
 
 class GradleApplicationInitliaserSpec extends Specification implements CodeGenerator{
     @Shared
@@ -85,6 +82,17 @@ class GradleApplicationInitliaserSpec extends Specification implements CodeGener
             assert  rootDirectory.isDirectory() : "Root Directory not created"
             def webXmlFile = new File(rootDirectory, Paths.get(WebXmlCreator.WEB_XML_PATH).toFile().toString())
             assert webXmlFile.exists() :" Web.xml does not exist"
+
+
+    }
+
+    def "gitIgnoreFile should be created"(){
+        when:
+        gradleAppInitialiser.writeGitIgnoreFile(rootDirectory)
+        then:
+        assert  rootDirectory.isDirectory() : "Root Directory not created"
+        def gitIgnoreFile = new File(rootDirectory, GIT_IGNORE)
+        assert gitIgnoreFile.exists() :" gitIgnoreFile does not exist"
 
 
     }

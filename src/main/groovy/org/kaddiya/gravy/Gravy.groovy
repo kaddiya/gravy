@@ -45,6 +45,7 @@ class Gravy {
                 def rootDir = gradleAppInitialiser.prepareEnvironment();
                 gradleAppInitialiser.writeBuildGradleTemplate(rootDir)
                 gradleAppInitialiser.writeWebXmlFile(rootDir)
+                gradleAppInitialiser.writeGitIgnoreFile(rootDir);
                 gradleAppInitialiser.writeRootRouterClass(rootDir)
                 gradleAppInitialiser.writeServiceModuleClass(rootDir)
                 gradleAppInitialiser.writeMetaRouterClass(rootDir)
