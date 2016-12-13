@@ -1,14 +1,12 @@
 package org.kaddiya.gravy.initilaiser.impl
+
 import com.google.inject.Inject
 import com.google.inject.name.Named
 import org.gradle.tooling.GradleConnector
-import static org.kaddiya.gravy.Constants.GROUP_ID_KEY
-import static org.kaddiya.gravy.Constants.PROJECT_NAME_KEY
-import static org.kaddiya.gravy.Constants.SERVICE_MODULE_KEY
-
 import org.kaddiya.gravy.generator.impl.BuildScriptGeneratorImpl
 import org.kaddiya.gravy.generator.impl.ConfigurationsGeneratorImpl
 import org.kaddiya.gravy.generator.impl.DependencyGeneratorImpl
+import org.kaddiya.gravy.generator.impl.GitIgnoreGenerator
 import org.kaddiya.gravy.generator.impl.MetaRouterGenerator
 import org.kaddiya.gravy.generator.impl.PingResourceGenerator
 import org.kaddiya.gravy.generator.impl.PluginGeneratorImpl
@@ -20,6 +18,12 @@ import org.kaddiya.gravy.initilaiser.Initialiser
 
 import java.nio.file.Paths
 
+
+import static org.kaddiya.gravy.Constants.GROUP_ID_KEY
+import static org.kaddiya.gravy.Constants.PROJECT_NAME_KEY
+import static org.kaddiya.gravy.Constants.SERVICE_MODULE_KEY
+
+
 class GradleApplicationInitialiser implements Initialiser {
 
     private final PluginGeneratorImpl pluginCreator
@@ -27,18 +31,21 @@ class GradleApplicationInitialiser implements Initialiser {
     private final BuildScriptGeneratorImpl buildScriptCreator
     private final RepositoryGeneratorImpl repositoryCreator
     private final WebXmlCreator webXmlCreator
+    private final GitIgnoreGenerator gitIgnoreGenerator;
     private final ServiceModuleGenerator serviceModuleCreator
     private final RootRouterGenerator  rootRouterCreator
     private final MetaRouterGenerator metaRouterCreator
     private final PingResourceGenerator pingResourceCreator
     private final String GRADLE_BUILD_TEMPLATE = "gradleBuildTemplate.txt";
     private final String WEB_XML_TEMPLATE = "webXmlTemplate.txt"
+    private final String GIT_IGNORE_TEMPLATE = "gitIgnoreTemplate.txt"
     private final String SERVICE_MODULE_CLASS_TEMPLATE = "serviceModuleClassTemplate.txt"
     private final String ROOT_ROUTER_CLASS_TEMPLATE = "rootRouterClassTemplate.txt"
     private final String META_ROUTER_CLASS_TEMPLATE = "metaRouterClassTemplate.txt"
     private final String PING_RESOURCE_CLASS_TEMPLATE = "pingResourceClassTemplate.txt"
     private final String gradleBuildTemplate
     private final String webXmlTemplate
+    private final String gitIgnoreTemplate
     private final String serviceModuleTemplate
     private final String rootRouterTemplate
     private final String metaRouterTemplate
@@ -47,20 +54,20 @@ class GradleApplicationInitialiser implements Initialiser {
     private final ConfigurationsGeneratorImpl configurationsGenerator
 
 
-
     @Inject
-    GradleApplicationInitialiser( PluginGeneratorImpl pluginCreator, DependencyGeneratorImpl dependancyCreator,
-                                  BuildScriptGeneratorImpl buildScriptCreator, WebXmlCreator webXmlCreator,
-                                  RepositoryGeneratorImpl repositoryCreator, RootRouterGenerator rootRouterCreator,
-                                  ServiceModuleGenerator serviceModuleCreator, MetaRouterGenerator metaRouterCreator,
-                                  PingResourceGenerator pingResourceCreator, @Named("gravyProps")Map gravyProps,
-                                  ConfigurationsGeneratorImpl configurationsGenerator) {
+    GradleApplicationInitialiser(PluginGeneratorImpl pluginCreator, DependencyGeneratorImpl dependancyCreator,
+                                 BuildScriptGeneratorImpl buildScriptCreator, WebXmlCreator webXmlCreator,
+                                 GitIgnoreGenerator gitIgnoreGenerator, RepositoryGeneratorImpl repositoryCreator,
+                                 RootRouterGenerator rootRouterCreator, ServiceModuleGenerator serviceModuleCreator,
+                                 MetaRouterGenerator metaRouterCreator, PingResourceGenerator pingResourceCreator,
+                                 @Named("gravyProps") Map gravyProps, ConfigurationsGeneratorImpl configurationsGenerator) {
 
         this.pluginCreator = pluginCreator
         this.dependancyCreator = dependancyCreator
         this.buildScriptCreator = buildScriptCreator
         this.repositoryCreator = repositoryCreator
         this.webXmlCreator = webXmlCreator
+        this.gitIgnoreGenerator = gitIgnoreGenerator;
         this.serviceModuleCreator = serviceModuleCreator
         this.rootRouterCreator = rootRouterCreator
         this.metaRouterCreator = metaRouterCreator
@@ -72,6 +79,7 @@ class GradleApplicationInitialiser implements Initialiser {
         ClassLoader classLoader = getClass().getClassLoader();
         gradleBuildTemplate = getResourceFileFromLoader(classLoader, GRADLE_BUILD_TEMPLATE)
         webXmlTemplate = getResourceFileFromLoader(classLoader, WEB_XML_TEMPLATE)
+        gitIgnoreTemplate = getResourceFileFromLoader(classLoader, GIT_IGNORE_TEMPLATE)
         serviceModuleTemplate = getResourceFileFromLoader(classLoader, SERVICE_MODULE_CLASS_TEMPLATE)
         metaRouterTemplate = getResourceFileFromLoader(classLoader, META_ROUTER_CLASS_TEMPLATE)
         rootRouterTemplate = getResourceFileFromLoader(classLoader, ROOT_ROUTER_CLASS_TEMPLATE)
@@ -136,6 +144,13 @@ class GradleApplicationInitialiser implements Initialiser {
         def webXmlFile = webXmlCreator.createWebxmlFile(projectRootDir)
         def webXmlTemplate = webXmlCreator.createXmlTemplate(webXmlTemplate, ["serviceModule" : this.gravyProps.get(SERVICE_MODULE_KEY), "groupId" : this.gravyProps.get(GROUP_ID_KEY)])
         webXmlFile.write(webXmlTemplate)
+    }
+
+    @Override
+    void writeGitIgnoreFile( File projectRootDir) {
+        def gitIgnoreFile = gitIgnoreGenerator.createGitIgnoreFile(projectRootDir)
+        def gitIgnore = gitIgnoreGenerator.createGitIgnoreTemplate(gitIgnoreTemplate);
+        gitIgnoreFile.write(gitIgnore)
     }
 
     @Override

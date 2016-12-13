@@ -28,7 +28,6 @@ abstract class AbstractCodeGenerator {
         populateBindings()
     }
 
-
     protected File generateFile(File projRootDir, Map<String, String> binding){
         def generatedFilePath = filePathTemplate.make(binding).toString()
         generatedFilePath = Paths.get(generatedFilePath).toFile().toString()
