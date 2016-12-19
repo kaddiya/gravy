@@ -18,7 +18,6 @@ import org.kaddiya.gravy.initilaiser.Initialiser
 
 import java.nio.file.Paths
 
-
 import static org.kaddiya.gravy.Constants.GROUP_ID_KEY
 import static org.kaddiya.gravy.Constants.PROJECT_NAME_KEY
 import static org.kaddiya.gravy.Constants.SERVICE_MODULE_KEY
