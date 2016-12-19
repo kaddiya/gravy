@@ -1,18 +1,28 @@
 package org.kaddiya.gravy.initilaiser.impl
-
-import java.nio.file.Paths
-
 import com.google.inject.Inject
 import com.google.inject.name.Named
-import groovy.json.JsonSlurper
+import io.swagger.models.Path
+import io.swagger.models.Swagger
+import io.swagger.parser.SwaggerParser
 import org.gradle.tooling.GradleConnector
-import org.kaddiya.gravy.generator.impl.*
+import org.kaddiya.gravy.generator.impl.BuildScriptGeneratorImpl
+import org.kaddiya.gravy.generator.impl.ConfigurationsGeneratorImpl
+import org.kaddiya.gravy.generator.impl.DependencyGeneratorImpl
+import org.kaddiya.gravy.generator.impl.MetaRouterGenerator
+import org.kaddiya.gravy.generator.impl.PingResourceGenerator
+import org.kaddiya.gravy.generator.impl.PluginGeneratorImpl
+import org.kaddiya.gravy.generator.impl.RepositoryGeneratorImpl
+import org.kaddiya.gravy.generator.impl.RootRouterGenerator
+import org.kaddiya.gravy.generator.impl.ServiceModuleGenerator
+import org.kaddiya.gravy.generator.impl.WebXmlCreator
 import org.kaddiya.gravy.initilaiser.Initialiser
-import org.kaddiya.gravy.model.API
-import org.kaddiya.gravy.model.Swagger
+
 import java.nio.file.Paths
 
-import static org.kaddiya.gravy.Constants.*
+import static org.kaddiya.gravy.Constants.GROUP_ID_KEY
+import static org.kaddiya.gravy.Constants.PROJECT_NAME_KEY
+import static org.kaddiya.gravy.Constants.SERVICE_MODULE_KEY
+import static org.kaddiya.gravy.Constants.SWAGGER_FILE
 
 class GradleApplicationInitialiser implements Initialiser {
 
@@ -39,8 +49,9 @@ class GradleApplicationInitialiser implements Initialiser {
     private final String pingResourceTemplate
     private final Map<String, String> gravyProps
     private final ConfigurationsGeneratorImpl configurationsGenerator
-
-
+    private Swagger swagger
+    private HashMap<String, Path> paths
+    private File projectRootDir;
 
     @Inject
     GradleApplicationInitialiser( PluginGeneratorImpl pluginCreator, DependencyGeneratorImpl dependancyCreator,
@@ -70,13 +81,13 @@ class GradleApplicationInitialiser implements Initialiser {
         metaRouterTemplate = getResourceFileFromLoader(classLoader, META_ROUTER_CLASS_TEMPLATE)
         rootRouterTemplate = getResourceFileFromLoader(classLoader, ROOT_ROUTER_CLASS_TEMPLATE)
         pingResourceTemplate = getResourceFileFromLoader(classLoader, PING_RESOURCE_CLASS_TEMPLATE)
-
     }
 
     private String getResourceFileFromLoader(ClassLoader classLoader, String fileName){
         def resourceStrem = classLoader.getResourceAsStream(fileName)
         return resourceStrem.text
     }
+
     @Override
     File prepareEnvironment() {
         String applicationName = this.gravyProps.get(PROJECT_NAME_KEY)
@@ -140,9 +151,22 @@ class GradleApplicationInitialiser implements Initialiser {
 
     @Override
     void writeRootRouterClass( File projectRootDir) {
-        def routerClassFile = this.rootRouterCreator.createFile(projectRootDir)
+        this.projectRootDir = projectRootDir
+        def routerClassFile = this.rootRouterCreator.createFile(projectRootDir, "RootRouter")
+        String currentKey;
+        List<String> arrayList = paths.keySet().asList();
+        println arrayList
+        if (!arrayList.isEmpty()) {
+            currentKey = arrayList.get(0);
+        }
+
+        parseStructure(arrayList, currentKey)
         def rootRouterTemaplte = this.rootRouterCreator.createCode(rootRouterTemplate)
         routerClassFile.write(rootRouterTemaplte)
+    }
+
+    Set<Map.Entry<String, Path>> getEntrySet(String currentKey) {
+        return paths.entrySet().findAll {entry -> entry.key.contains(currentKey + "/")}
     }
 
     @Override
@@ -150,7 +174,6 @@ class GradleApplicationInitialiser implements Initialiser {
         def metaRouterClassFile = this.metaRouterCreator.createFile(projectRootDir)
         def metaRouterTemplate = this.metaRouterCreator.createCode(metaRouterTemplate)
         metaRouterClassFile.write(metaRouterTemplate)
-
     }
 
     @Override
@@ -162,21 +185,10 @@ class GradleApplicationInitialiser implements Initialiser {
 
     @Override
     void writeAPI() {
-        File swaggerFile = Paths.get(System.properties['user.dir'], this.gravyProps.get(SWAGGER_FILE)).toFile()
-        print swaggerFile.text
-        parseSwaggerFile(swaggerFile);
-    }
-
-    private void parseSwaggerFile(File swaggerFile) {
-        def jsonSlurper = new JsonSlurper();
-        def swagger = (Swagger)jsonSlurper.parse(swaggerFile)
-        List<API> apiList = swagger.apis;
-        apiList.each {
-            api ->
-                def Api = new API(api.operations, api.path)
-                print Api.toString();
-        }
-
+        String swaggerFilePath = Paths.get(System.properties['user.dir'], this.gravyProps.get(SWAGGER_FILE)).toString()
+        print swaggerFilePath
+        swagger = new SwaggerParser().read(swaggerFilePath);
+        paths = swagger.getPaths();
     }
 
     void bootstrapProject( File projectRootDirectory ) {
@@ -196,5 +208,28 @@ class GradleApplicationInitialiser implements Initialiser {
         } finally {
             conn.close();
         }
+    }
+
+    String parseStructure(List keyList, String currentKey) {
+        this.rootRouterCreator.createBindings(currentKey, paths.get(currentKey))
+        print currentKey
+        Set<Map.Entry<String, Path>> pathMap = getEntrySet(currentKey)
+        createFileBhai(pathMap.collect({entry -> entry.key.replace(currentKey, "")}), currentKey);
+        if (keyList.size() > keyList.indexOf(currentKey) + pathMap.size() + 1) {
+            currentKey = keyList.get(keyList.indexOf(currentKey) + pathMap.size() + 1);
+        } else {
+            return;
+        }
+        parseStructure(keyList, currentKey)
+    }
+
+    void createFileBhai(List filteredKey, String currentKey) {
+        rootRouterCreator.createFile(projectRootDir, currentKey.replace("/", "").concat("Router"))
+        if (!filteredKey.isEmpty())
+        parseStructure(filteredKey, filteredKey.get(0))
+        else {
+            return;
+        }
+
     }
 }

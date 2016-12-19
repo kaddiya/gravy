@@ -18,5 +18,4 @@ class Repository {
             return "${name}{ \n name = ${description} \n url = ${url}".toString()
         }
     }
-
 }

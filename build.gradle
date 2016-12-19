@@ -35,6 +35,8 @@ dependencies {
 	compile  "org.gradle:gradle-tooling-api:${gradle.gradleVersion}"
 	compile  'com.google.inject:guice:[4.0,5)'
 	compile 'com.google.inject:guice-parent:3.0'
+	compile group: 'io.swagger', name: 'swagger-parser', version: '1.0.23'
+
 
 	// https://mvnrepository.com/artifact/org.slf4j/slf4j-simple
 	compile 'org.slf4j:slf4j-simple:1.7.21'

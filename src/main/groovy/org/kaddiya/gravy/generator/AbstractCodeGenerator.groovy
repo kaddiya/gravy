@@ -1,5 +1,7 @@
 package org.kaddiya.gravy.generator
 
+import io.swagger.models.Path
+
 import static org.kaddiya.gravy.Constants.GROUP_ID_KEY
 import static org.kaddiya.gravy.Constants.GROUP_PACKAGE_KEY
 import static org.kaddiya.gravy.Constants.ROOT_ROUTER_KEY
@@ -28,7 +30,6 @@ abstract class AbstractCodeGenerator {
         populateBindings()
     }
 
-
     protected File generateFile(File projRootDir, Map<String, String> binding){
         def generatedFilePath = filePathTemplate.make(binding).toString()
         generatedFilePath = Paths.get(generatedFilePath).toFile().toString()
@@ -43,8 +44,9 @@ abstract class AbstractCodeGenerator {
 
     }
 
-    abstract protected File createFile(File projRootDir);
+    abstract protected File createFile(File projRootDir, String fileName);
     abstract protected String createCode(String metaRouterTemplate);
+    abstract protected void createBindings(String key, Path value);
 
     protected String groupPackage(String groupId){
         return groupId.replace(".", "/")

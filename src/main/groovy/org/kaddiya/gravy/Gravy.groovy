@@ -37,11 +37,11 @@ class Gravy {
                 def rootDir = gradleAppInitialiser.prepareEnvironment();
                 gradleAppInitialiser.writeBuildGradleTemplate(rootDir)
                 gradleAppInitialiser.writeWebXmlFile(rootDir)
+                gradleAppInitialiser.writeAPI()
                 gradleAppInitialiser.writeRootRouterClass(rootDir)
                 gradleAppInitialiser.writeServiceModuleClass(rootDir)
                 gradleAppInitialiser.writeMetaRouterClass(rootDir)
                 gradleAppInitialiser.writePingResourceClass(rootDir)
-                gradleAppInitialiser.writeAPI();
                 println("Lets bootstrap your application")
                 break;
             default:
