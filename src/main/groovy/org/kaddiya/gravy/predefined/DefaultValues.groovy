@@ -9,8 +9,8 @@ import org.kaddiya.gravy.model.Repository
 class DefaultValues {
 
     static final List<Plugin> DEFAULT_PLUGINS = Collections.unmodifiableList(
-            Arrays.asList("groovy", "java", "maven", "idea", "war", "eclipse", "org.akhikhl.gretty", "jacoco")
-                    .collect { String pluginName -> new Plugin(pluginName) });
+            Arrays.asList("groovy", "java", "maven", "idea", "war", "eclipse", "org.akhikhl.gretty", "jacoco",
+                    "org.liquibase.gradle").collect { String pluginName -> new Plugin(pluginName) });
 
     static
     final List<Repository> DEFAULT_REPOSITRIES = Collections.unmodifiableList(Arrays.asList("mavenLocal",
@@ -31,8 +31,8 @@ class DefaultValues {
     });
 
     static final List<Dependency> DEFAULT_BUILDSCRIPT_DEPENDENCY = Collections.unmodifiableList(Arrays.asList(
-            new GAV("org.akhikhl.gretty", "gretty", "+")).collect { GAV gav ->
-        new Dependency(phaseType: BuildPhaseType.COMPILE, gav: gav, isBuildScript: true)
+            new GAV("org.akhikhl.gretty", "gretty", "+"), new GAV("org.liquibase", "liquibase-gradle-plugin", "1.2.1"))
+            .collect { GAV gav -> new Dependency(phaseType: BuildPhaseType.COMPILE, gav: gav, isBuildScript: true)
     })
 
     static final List<Dependency> DEFAULT_RESOLUTION_STRATEGY_DEPENDENCY = Collections.unmodifiableList(Arrays.asList(

@@ -13,13 +13,16 @@ class PluginGeneratorImpl<Plugin> extends AbstractScriptGenerator<Plugin> {
     @Override
     protected <Plugin> void create(List<Plugin> modelList) {
 
-       def pluginBinding = modelList.collectEntries {Plugin plugin ->
-           String pluginName =  plugin.getPluginName()
+        def pluginBinding = modelList.collectEntries { Plugin plugin ->
+            String pluginName = plugin.getPluginName()
 
-           if(pluginName.contains("gretty")){
-               return ["gretty" : plugin.toString()]
-           }
-           return [("${pluginName}".toString()) : plugin.toString()] }
+            if (pluginName.contains("gretty")) {
+                pluginName = "gretty"
+            } else if (pluginName.contains("liquibase")) {
+                pluginName = "liquibase"
+            }
+
+            return [("${pluginName}".toString()): plugin.toString()] }
 
         this.binding.putAll(pluginBinding)
 

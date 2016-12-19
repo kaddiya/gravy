@@ -1,14 +1,7 @@
 package org.kaddiya.gravy.initilaiser.impl
-
-import java.nio.file.Paths
-
 import com.google.inject.Inject
 import com.google.inject.name.Named
 import org.gradle.tooling.GradleConnector
-import static org.kaddiya.gravy.Constants.GROUP_ID_KEY
-import static org.kaddiya.gravy.Constants.PROJECT_NAME_KEY
-import static org.kaddiya.gravy.Constants.SERVICE_MODULE_KEY
-
 import org.kaddiya.gravy.generator.impl.BuildScriptGeneratorImpl
 import org.kaddiya.gravy.generator.impl.ConfigurationsGeneratorImpl
 import org.kaddiya.gravy.generator.impl.DependencyGeneratorImpl
@@ -20,7 +13,12 @@ import org.kaddiya.gravy.generator.impl.RootRouterGenerator
 import org.kaddiya.gravy.generator.impl.ServiceModuleGenerator
 import org.kaddiya.gravy.generator.impl.WebXmlCreator
 import org.kaddiya.gravy.initilaiser.Initialiser
-import org.kaddiya.gravy.model.Configuration
+
+import java.nio.file.Paths
+
+import static org.kaddiya.gravy.Constants.GROUP_ID_KEY
+import static org.kaddiya.gravy.Constants.PROJECT_NAME_KEY
+import static org.kaddiya.gravy.Constants.SERVICE_MODULE_KEY
 
 class GradleApplicationInitialiser implements Initialiser {
 

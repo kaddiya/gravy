@@ -16,6 +16,7 @@ ${war}
 ${eclipse}
 ${jacoco}
 ${gretty}
+${liquibase}
 
 
 
