@@ -21,8 +21,6 @@ public interface Initialiser {
 
     void writeRootRouterClass(File projRootDir);
 
-    void writeMetaRouterClass(File projectRootDir);
-
     void writePingResourceClass(File projectRootDir);
 
     void writeAPI();

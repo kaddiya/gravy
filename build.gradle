@@ -36,6 +36,7 @@ dependencies {
 	compile  'com.google.inject:guice:[4.0,5)'
 	compile 'com.google.inject:guice-parent:3.0'
 	compile group: 'io.swagger', name: 'swagger-parser', version: '1.0.23'
+	compile group: 'org.saur', name: 'saur', version: '0.0.1-SNAPSHOT'
 
 
 	// https://mvnrepository.com/artifact/org.slf4j/slf4j-simple

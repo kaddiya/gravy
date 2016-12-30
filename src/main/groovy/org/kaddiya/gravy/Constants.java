@@ -13,4 +13,8 @@ public interface Constants {
     String GROUP_PACKAGE_KEY        =  "groupPackage";
     String PROJECT_NAME_KEY         =  "projectName";
     String SWAGGER_FILE             =  "swaggerFile";
+    String ROUTER_PACKAGE      =  "router";
+    String RESOURCE_PACKAGE      =  "resource";
+    String REGEX                    = "/";
+    String BLANK_SPACE              = "";
 }

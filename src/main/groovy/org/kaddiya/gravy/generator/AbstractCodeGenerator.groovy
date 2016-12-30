@@ -1,17 +1,14 @@
 package org.kaddiya.gravy.generator
+import groovy.text.SimpleTemplateEngine
+import groovy.text.Template
+import org.kaddiya.gravy.predefined.Node
 
-import io.swagger.models.Path
+import java.nio.file.Paths
 
 import static org.kaddiya.gravy.Constants.GROUP_ID_KEY
 import static org.kaddiya.gravy.Constants.GROUP_PACKAGE_KEY
 import static org.kaddiya.gravy.Constants.ROOT_ROUTER_KEY
 import static org.kaddiya.gravy.Constants.SERVICE_MODULE_KEY
-
-import java.nio.file.Paths
-
-import groovy.text.SimpleTemplateEngine
-import groovy.text.Template
-
 
 abstract class AbstractCodeGenerator {
 
@@ -46,7 +43,7 @@ abstract class AbstractCodeGenerator {
 
     abstract protected File createFile(File projRootDir, String fileName);
     abstract protected String createCode(String metaRouterTemplate);
-    abstract protected void createBindings(String key, Path value);
+    abstract protected void createBindings(Node node);
 
     protected String groupPackage(String groupId){
         return groupId.replace(".", "/")

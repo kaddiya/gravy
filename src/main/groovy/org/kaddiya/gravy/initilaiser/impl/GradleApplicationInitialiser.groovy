@@ -1,9 +1,11 @@
 package org.kaddiya.gravy.initilaiser.impl
+
 import com.google.inject.Inject
 import com.google.inject.name.Named
 import io.swagger.models.Path
 import io.swagger.models.Swagger
 import io.swagger.parser.SwaggerParser
+import org.apache.commons.lang3.StringUtils
 import org.gradle.tooling.GradleConnector
 import org.kaddiya.gravy.generator.impl.BuildScriptGeneratorImpl
 import org.kaddiya.gravy.generator.impl.ConfigurationsGeneratorImpl
@@ -16,11 +18,16 @@ import org.kaddiya.gravy.generator.impl.RootRouterGenerator
 import org.kaddiya.gravy.generator.impl.ServiceModuleGenerator
 import org.kaddiya.gravy.generator.impl.WebXmlCreator
 import org.kaddiya.gravy.initilaiser.Initialiser
+import org.kaddiya.gravy.predefined.Node
+import org.saur.initilaiser.TreeParser
 
 import java.nio.file.Paths
 
+import static org.kaddiya.gravy.Constants.*
 import static org.kaddiya.gravy.Constants.GROUP_ID_KEY
 import static org.kaddiya.gravy.Constants.PROJECT_NAME_KEY
+import static org.kaddiya.gravy.Constants.REGEX
+import static org.kaddiya.gravy.Constants.ROUTER_PACKAGE
 import static org.kaddiya.gravy.Constants.SERVICE_MODULE_KEY
 import static org.kaddiya.gravy.Constants.SWAGGER_FILE
 
@@ -144,36 +151,51 @@ class GradleApplicationInitialiser implements Initialiser {
 
     @Override
     void writeServiceModuleClass( File projectRootDir) {
-        def serviceClassFile = this.serviceModuleCreator.createFile(projectRootDir)
+        def serviceClassFile = this.serviceModuleCreator.createFile(projectRootDir, "")
         def serviceClassTemplate = this.serviceModuleCreator.createCode(serviceModuleTemplate)
         serviceClassFile.write(serviceClassTemplate)
     }
 
     @Override
-    void writeRootRouterClass( File projectRootDir) {
+    void writeRootRouterClass(File projectRootDir) {
+        List <org.saur.model.Node> nodeList = TreeParser.parseTree(paths.keySet().asList()).values().asList();
+        List<org.saur.model.Node> rootNodes = nodeList.findAll {node -> node.path.equals(node.pathName)}
         this.projectRootDir = projectRootDir
-        def routerClassFile = this.rootRouterCreator.createFile(projectRootDir, "RootRouter")
-        String currentKey;
-        List<String> arrayList = paths.keySet().asList();
-        println arrayList
-        if (!arrayList.isEmpty()) {
-            currentKey = arrayList.get(0);
+        def routerClassFile = this.rootRouterCreator.createFile(projectRootDir, DEFAULT_ROOT_ROUTER, ROUTER_PACKAGE)
+        rootNodes.forEach {node -> this.rootRouterCreator.createBindings(node)}
+        def rootRouterTemplate = this.rootRouterCreator.createCode(rootRouterTemplate)
+        routerClassFile.write(rootRouterTemplate)
+        writeMetaRouterClass(rootNodes)
+    }
+
+    void writeMetaRouterClass(List<Node> rootNodes) {
+        this.rootRouterCreator.resetBindings()
+        rootNodes.forEach { node ->
+            String fileName;
+            String packageName;
+            if (node.hasChildren()) {
+                fileName = StringUtils.capitalize(node.getPathName().replace(REGEX, BLANK_SPACE)) + StringUtils
+                        .capitalize(ROUTER_PACKAGE)
+                packageName = ROUTER_PACKAGE;
+            } else {
+                fileName = StringUtils.capitalize(node.getPathName().replace(REGEX, BLANK_SPACE)) + StringUtils
+                        .capitalize(RESOURCE_PACKAGE)
+                packageName = RESOURCE_PACKAGE;
+            }
+            def routerClassFile = this.rootRouterCreator.createFile(projectRootDir, fileName, packageName)
+            List<org.saur.model.Node> childNodes = node.getChildren().values().asList()
+            def metaRouterTemplate
+            if (childNodes.isEmpty()) {
+                metaRouterTemplate = this.rootRouterCreator.createCode(pingResourceTemplate)
+            } else {
+                childNodes.forEach { childNode -> this.rootRouterCreator.createBindings(childNode) }
+                metaRouterTemplate = this.rootRouterCreator.createCode(rootRouterTemplate)
+            }
+
+            routerClassFile.write(metaRouterTemplate)
+            writeMetaRouterClass(childNodes)
+
         }
-
-        parseStructure(arrayList, currentKey)
-        def rootRouterTemaplte = this.rootRouterCreator.createCode(rootRouterTemplate)
-        routerClassFile.write(rootRouterTemaplte)
-    }
-
-    Set<Map.Entry<String, Path>> getEntrySet(String currentKey) {
-        return paths.entrySet().findAll {entry -> entry.key.contains(currentKey + "/")}
-    }
-
-    @Override
-    void writeMetaRouterClass( File projectRootDir ) {
-        def metaRouterClassFile = this.metaRouterCreator.createFile(projectRootDir)
-        def metaRouterTemplate = this.metaRouterCreator.createCode(metaRouterTemplate)
-        metaRouterClassFile.write(metaRouterTemplate)
     }
 
     @Override
@@ -208,28 +230,5 @@ class GradleApplicationInitialiser implements Initialiser {
         } finally {
             conn.close();
         }
-    }
-
-    String parseStructure(List keyList, String currentKey) {
-        this.rootRouterCreator.createBindings(currentKey, paths.get(currentKey))
-        print currentKey
-        Set<Map.Entry<String, Path>> pathMap = getEntrySet(currentKey)
-        createFileBhai(pathMap.collect({entry -> entry.key.replace(currentKey, "")}), currentKey);
-        if (keyList.size() > keyList.indexOf(currentKey) + pathMap.size() + 1) {
-            currentKey = keyList.get(keyList.indexOf(currentKey) + pathMap.size() + 1);
-        } else {
-            return;
-        }
-        parseStructure(keyList, currentKey)
-    }
-
-    void createFileBhai(List filteredKey, String currentKey) {
-        rootRouterCreator.createFile(projectRootDir, currentKey.replace("/", "").concat("Router"))
-        if (!filteredKey.isEmpty())
-        parseStructure(filteredKey, filteredKey.get(0))
-        else {
-            return;
-        }
-
     }
 }

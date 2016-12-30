@@ -1,10 +1,8 @@
 package org.kaddiya.gravy.generator.impl
-
 import com.google.inject.Inject
 import com.google.inject.name.Named
-import io.swagger.models.Path
 import org.kaddiya.gravy.generator.AbstractCodeGenerator
-
+import org.kaddiya.gravy.predefined.Node
 
 class PingResourceGenerator  extends AbstractCodeGenerator{
     static final String PING_RESOURCE_PATH = '/src/main/groovy/${groupId}/resources/meta/PingResource.groovy'
@@ -30,7 +28,7 @@ class PingResourceGenerator  extends AbstractCodeGenerator{
     }
 
     @Override
-    protected void createBindings(String key, Path value) {
+    protected void createBindings(Node node) {
 
     }
 }

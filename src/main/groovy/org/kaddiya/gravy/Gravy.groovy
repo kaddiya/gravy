@@ -40,7 +40,7 @@ class Gravy {
                 gradleAppInitialiser.writeAPI()
                 gradleAppInitialiser.writeRootRouterClass(rootDir)
                 gradleAppInitialiser.writeServiceModuleClass(rootDir)
-                gradleAppInitialiser.writeMetaRouterClass(rootDir)
+               // gradleAppInitialiser.writeMetaRouterClass(rootDir)
                 gradleAppInitialiser.writePingResourceClass(rootDir)
                 println("Lets bootstrap your application")
                 break;

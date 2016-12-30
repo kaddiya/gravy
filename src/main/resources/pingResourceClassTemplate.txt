@@ -1,4 +1,4 @@
-package ${groupPackage}.resources.meta
+package ${groupPackage}
 
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
@@ -7,7 +7,7 @@ import org.restlet.resource.ServerResource
 
 @Slf4j
 @CompileStatic
-class PingResource extends ServerResource {
+class $rootRouter extends ServerResource {
 
     static class Pong {
         final boolean pong = true

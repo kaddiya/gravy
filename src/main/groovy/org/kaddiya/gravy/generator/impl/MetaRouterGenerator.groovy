@@ -1,9 +1,8 @@
 package org.kaddiya.gravy.generator.impl
-
 import com.google.inject.Inject
 import com.google.inject.name.Named
-import io.swagger.models.Path
 import org.kaddiya.gravy.generator.AbstractCodeGenerator
+import org.kaddiya.gravy.predefined.Node
 
 class MetaRouterGenerator extends AbstractCodeGenerator{
     static final String META_ROUTER_PATH = '/src/main/groovy/${groupId}/resources/meta/MetaRouter.groovy'
@@ -29,7 +28,7 @@ class MetaRouterGenerator extends AbstractCodeGenerator{
     }
 
     @Override
-    protected void createBindings(String key, Path value) {
+    protected void createBindings(Node node) {
 
     }
 }
