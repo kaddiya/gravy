@@ -88,8 +88,16 @@ class GradleApplicationInitialiser implements Initialiser {
     }
 
     private String getResourceFileFromLoader(ClassLoader classLoader, String fileName){
-        def resourceStrem = classLoader.getResourceAsStream(fileName)
-        return resourceStrem.text
+      InputStream inputStream = classLoader.getResourceAsStream(fileName);
+        inputStream.withCloseable { is->
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+            StringBuilder result = new StringBuilder("");
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                result.append(line);
+            }
+            return result.toString()
     }
     @Override
     File prepareEnvironment() {
