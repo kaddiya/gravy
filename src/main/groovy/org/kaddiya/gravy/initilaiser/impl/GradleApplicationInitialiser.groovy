@@ -98,6 +98,7 @@ class GradleApplicationInitialiser implements Initialiser {
                 result.append(line);
             }
             return result.toString()
+        }
     }
     @Override
     File prepareEnvironment() {
